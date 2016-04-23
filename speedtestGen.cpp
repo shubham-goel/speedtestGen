@@ -4,9 +4,11 @@
 #include <list>
 #include <fstream>
 #include <ctime>
+#include <chrono>
 #include <string>
 #include <cstdlib>
 #include <stdio.h>
+#include <iomanip>
 
 using namespace std;
 
@@ -29,15 +31,16 @@ struct tm* get_curr_time() {
     return now;
 }
 
-int milli_to_sec(clock_t input){
-    int r = input;
-    if(r%1000 > 500){
-        r = r/1000 + 1;
-    }
-    else{
-        r = r/1000;
-    }
-    return r;
+double chrono_to_sec(chrono::steady_clock::time_point end, chrono::steady_clock::time_point start){
+	return (chrono::duration_cast<chrono::microseconds>(end - start).count())/1000000.0;
+    // int r = input;
+    // if(r%1000 > 500){
+    //     r = r/1000 + 1;
+    // }
+    // else{
+    //     r = r/1000;
+    // }
+    // return r;
 }
 int minimum(int a, int b){
     return (a<b)?a:b;
@@ -81,16 +84,16 @@ public:
     int ans_entered;
     int ans;
     char type;
-    clock_t start,end;
-    void print_to_file(ofstream&file, clock_t init){
+    chrono::steady_clock::time_point start,end;
+    void print_to_file(ofstream&file, chrono::steady_clock::time_point init){
         if(is_correct()){
             file<<"Correct\t\t";
         }
         else{
             file<<"Wrong\t\t";
         }
-        file<<"Time Taken: "<<milli_to_sec(end-start)<<"\t";
-        file<<"Total Time: "<<milli_to_sec(end-init)<<"\t\t";
+        file<<"Time Taken: "<<setprecision(4)<<chrono_to_sec(end,start)<<"\t";
+        file<<"Total Time: "<<setprecision(4)<<chrono_to_sec(end,init)<<"\t\t";
         file <<num1<<" "<<type<<" "<<num2<<" = ";
         if(is_correct()){
             file<< ans_entered;
@@ -103,9 +106,9 @@ public:
     };
     bool get_ans(){
         cout<<num1<<" "<<type<<" "<<num2<<" = ";
-        start=clock();
+        start=std::chrono::steady_clock::now();
         cin>>ans_entered;
-        end= clock();
+        end= std::chrono::steady_clock::now();
         return is_correct();
     }
     bool is_correct(){
@@ -166,7 +169,7 @@ class speed_test{
     list<question*> questions;
     pair<int,int> add_range[2] , subt_range[2] , multi_range[2] , div_range[2] ;
     int score;
-    clock_t init,end;
+    chrono::steady_clock::time_point init,end;
     void set_ranges(){
         cout<<"Please Enter Number Ranges as <number start> <number end>.\n";
 
@@ -233,7 +236,7 @@ class speed_test{
     void get_answers(){
         auto it = questions.begin();
 
-        init=clock();
+        init=std::chrono::steady_clock::now();
 
         for(int i=0;it!=questions.end();i++,it++){
             cout<<i<<".\t";
@@ -242,7 +245,7 @@ class speed_test{
             }
         }
 
-        end=clock();
+        end=std::chrono::steady_clock::now();;
 
         cout<<"\nYour Score: "<<get_score()<<"/"<<num_ques<<"\n\n";
     }
@@ -289,7 +292,7 @@ class speed_test{
         // cout<<"Saving results to file : "<<clean(fname)+".txt"<<endl;
 
         file << "SPEED TEST"<<endl<<endl;
-        file<< "Score : "<<get_score()<<"/"<<num_ques<<"\t\t"<<"Total Time Taken: "<<milli_to_sec(end-init)<<"\n";
+        file<< "Score : "<<get_score()<<"/"<<num_ques<<"\t\t"<<setprecision(4)<<"Total Time Taken: "<<chrono_to_sec(end,init)<<"\n";
 
         auto it = questions.begin() ;
         for(int i=1;it!=questions.end();i++,it++){
