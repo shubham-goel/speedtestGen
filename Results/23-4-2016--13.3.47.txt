@@ -1,0 +1,8 @@
+SPEED TEST
+
+Score : 5/5		Total Time Taken: 0
+1	Correct		Time Taken: 0	Total Time: 0		10 X 10 = 100
+2	Correct		Time Taken: 0	Total Time: 0		15 X 17 = 255
+3	Correct		Time Taken: 0	Total Time: 0		12 + 15 = 27
+4	Correct		Time Taken: 0	Total Time: 0		12 X 12 = 144
+5	Correct		Time Taken: 0	Total Time: 0		16 + 18 = 34
